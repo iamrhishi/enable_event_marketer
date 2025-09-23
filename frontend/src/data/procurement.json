@@ -1,0 +1,92 @@
+[
+  {
+    "title": "Supplier Risk Prediction",
+    "outcome": "Supplier due-diligence for financial & operational risks.",
+    "problem": "Supply chain disruptions and reputational damage when a supplier fails or violates compliance.",
+    "solution": "AI models ingest supplier financials, credit scores, delivery history, and external news/ESG feeds to flag risk changes in real time.",
+    "persona": ["Category Manager", "CPO", "Risk/Compliance Officer"],
+    "category": ["Supplier Risk Management", "Resilience", "ESG"],
+    "statistic": "77% of companies experienced supply chain disruptions in the last 12 months. (BCI Supply Chain Resilience Report, 2023)"
+  },
+  {
+    "title": "Automated Supplier Discovery & Pre-Qualification",
+    "outcome": "Rapidly find and evaluate new suppliers worldwide.",
+    "problem": "Manual searches are slow, biased, and miss emerging suppliers.",
+    "solution": "AI scans global supplier databases, catalogs, and certifications, ranking candidates against RFQ requirements.",
+    "persona": ["Sourcing Specialist", "Category Manager"],
+    "category": ["Supplier Discovery", "Strategic Sourcing"],
+    "statistic": "70% of procurement leaders say supplier diversification is now a top priority. (Gartner, 2023)"
+  },
+  {
+    "title": "Dynamic Should-Cost Modeling",
+    "outcome": "Reliable cost benchmarks to negotiate better deals.",
+    "problem": "Buyers don’t know if supplier quotes are inflated.",
+    "solution": "AI combines commodity prices, BOMs, labor/energy indexes, and historical PO data to create should-cost ranges.",
+    "persona": ["Buyer", "Category Manager", "CFO"],
+    "category": ["Cost Analytics", "Negotiation", "Savings"],
+    "statistic": "AI-powered procurement solutions can reduce purchasing costs by up to 20%. (Zipdo, 2024)"
+  },
+  {
+    "title": "Contract Risk Review (GenAI/NLP)",
+    "outcome": "Faster, more consistent contract reviews.",
+    "problem": "Legal bottlenecks slow down procurement; risky clauses get missed.",
+    "solution": "LLMs read contracts, highlight risky clauses, and suggest compliant alternatives.",
+    "persona": ["Procurement Lawyer", "CPO", "Legal Counsel"],
+    "category": ["Contract Management", "Risk", "Compliance"],
+    "statistic": "65% of organizations face delays due to slow contract review processes. (World Commerce & Contracting, 2023)"
+  },
+  {
+    "title": "Tail Spend Automation",
+    "outcome": "Bring tail spend under control and reduce leakage.",
+    "problem": "Low-value purchases often bypass procurement, leading to waste.",
+    "solution": "AI classifies purchases, recommends preferred suppliers, and automates low-risk approvals.",
+    "persona": ["Procurement Ops Manager", "Finance Controller"],
+    "category": ["Spend Management", "Compliance", "Automation"],
+    "statistic": "Tail spend typically accounts for 20% of spend but up to 80% of transactions. (The Hackett Group, 2023)"
+  },
+  {
+    "title": "Demand Forecasting for Materials",
+    "outcome": "Order the right materials at the right time.",
+    "problem": "Overstocking drives costs; understocking causes shortages.",
+    "solution": "AI forecasts demand using production schedules, seasonality, and historical trends.",
+    "persona": ["Demand Planner", "Buyer", "Supply Chain Manager"],
+    "category": ["Forecasting", "Inventory", "Cost Optimization"],
+    "statistic": "Demand forecast errors contribute to $1.1 trillion in lost revenue globally each year. (Gartner, 2022)"
+  },
+  {
+    "title": "Supplier Performance Analytics",
+    "outcome": "Real-time supplier scorecards with predictive insights.",
+    "problem": "Manual scorecards are backward-looking and inconsistent.",
+    "solution": "AI integrates delivery logs, defect rates, audits, and complaints to predict performance risks.",
+    "persona": ["Supplier Manager", "Category Manager", "CPO"],
+    "category": ["Supplier Relationship Management (SRM)", "Performance"],
+    "statistic": "Poor supplier performance causes 9%–15% additional costs in the supply chain. (McKinsey, 2023)"
+  },
+  {
+    "title": "ESG & Compliance Monitoring",
+    "outcome": "Proactively ensure supplier ESG and compliance.",
+    "problem": "Hard to track labor, carbon, or ethical risks across the supply base.",
+    "solution": "AI parses disclosures, shipping data, and 3rd-party ESG databases to flag violations.",
+    "persona": ["Sustainability Officer", "Procurement Lead", "Risk Manager"],
+    "category": ["ESG", "Compliance", "Risk"],
+    "statistic": "91% of procurement leaders see ESG as a “critical priority,” yet only 27% have full visibility. (Accenture, 2023)"
+  },
+  {
+    "title": "Intelligent RFx Automation",
+    "outcome": "Faster, smarter RFQ/RFP cycles.",
+    "problem": "RFx creation and scoring are repetitive, slow, and error-prone.",
+    "solution": "LLMs draft RFx templates, auto-score supplier responses, and recommend shortlists.",
+    "persona": ["Buyer", "Category Manager", "Procurement Ops"],
+    "category": ["Strategic Sourcing", "Automation", "Cycle Time"],
+    "statistic": "Large enterprises report 25% faster procurement cycles after adopting AI. (Zipdo, 2024)"
+  },
+  {
+    "title": "Working Capital & Payment Optimization",
+    "outcome": "Free up cash while protecting supplier health.",
+    "problem": "Inefficient payment terms either hurt suppliers or lock up capital.",
+    "solution": "AI optimizes payment schedules by balancing supplier risk with company cash flow needs.",
+    "persona": ["CFO", "Treasury Manager", "Supplier Relationship Manager"],
+    "category": ["Working Capital", "Finance", "Supplier Collaboration"],
+    "statistic": "60% of CFOs say optimizing working capital is a top priority for procurement in 2025. (PwC, 2024)"
+  }
+]

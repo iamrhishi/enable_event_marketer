@@ -1,0 +1,17 @@
+.App {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* Mobile responsive adjustments for App container */
+@media (max-width: 768px) {
+  .App {
+    padding: 0;
+    align-items: stretch;
+    justify-content: stretch;
+  }
+}
