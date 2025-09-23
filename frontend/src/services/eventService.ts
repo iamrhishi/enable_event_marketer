@@ -8,6 +8,8 @@ export interface Event {
   description: string;
   date: string;
   location: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface ApiResponse<T> {

@@ -1,2 +1,7 @@
+# Python 3.11+ required
 Flask==2.2.5
 Flask-CORS==5.0.0
+python-dotenv==1.0.0
+Flask-SQLAlchemy==3.0.5
+Flask-Limiter==3.5.0
+Werkzeug==2.3.7

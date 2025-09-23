@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  enable-app:
+    build: .
+    ports:
+      - "80:80"
+      - "5000:5000"
+      - "3000:3000"
+    volumes:
+      # Mount .env files for easy configuration updates
+      - ./backend/.env:/app/backend/.env
+      - ./frontend/.env:/app/frontend/.env
+      # Mount database for persistence
+      - ./data:/app/backend/data
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+    container_name: enable-event-marketer

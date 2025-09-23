@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import procurementUsecases from '../data/procurement.json';
-import { FaLinkedin, FaEnvelope, FaGlobe, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaLinkedin, FaEnvelope, FaGlobe } from 'react-icons/fa';
+import { useNotification } from './Notification';
+import { sendUseCaseEmail, sendFallbackEmail } from '../services/emailService';
 import '../styles/EventNetworkingAgent.css';
+import '../styles/Notification.css';
 
 
 
@@ -30,7 +33,8 @@ const topics = [
 ];
 
 function EventNetworkingAgent() {
-  const [chat, setChat] = useState([
+  const { showNotification } = useNotification();
+  const [chat] = useState([
     { sender: 'agent', content: defaultIntro },
     { sender: 'agent', content: (
       <div>
@@ -55,140 +59,339 @@ function EventNetworkingAgent() {
       </div>
     )}
   ]);
-  const [showPopup, setShowPopup] = useState(false);
-  const [popupIndex, setPopupIndex] = useState(0);
-  const [shareEmail, setShareEmail] = useState('');
+  const [currentPage, setCurrentPage] = useState('main'); // 'main' or 'usecases'
+  const [usecaseIndex, setUsecaseIndex] = useState(0);
+  const [shareEmail, setShareEmail] = useState(() => {
+    // Initialize with saved email if available
+    return localStorage.getItem('enable_user_email') || '';
+  });
+  const [hasValidEmail, setHasValidEmail] = useState(() => {
+    // Check localStorage on component mount
+    const savedEmail = localStorage.getItem('enable_user_email');
+    const savedUnlockStatus = localStorage.getItem('enable_content_unlocked');
+    return savedEmail && savedUnlockStatus === 'true';
+  });
+  const [isEmailSending, setIsEmailSending] = useState(false);
+  const [showUnlockedNotification, setShowUnlockedNotification] = useState(false);
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
 
-  const handleShare = () => {
-    // Simulate sending use case to email
-    if (!shareEmail || !shareEmail.includes('@')) {
-      alert('Please enter a valid email address.');
+  // Minimum distance for swipe detection - more sensitive
+  const minSwipeDistance = 30;
+
+  const onTouchStart = (e) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe) {
+      handleNextUsecase();
+    } else if (isRightSwipe) {
+      handlePrevUsecase();
+    }
+  };
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+
+  const handleEmailChange = (e) => {
+    const email = e.target.value;
+    setShareEmail(email);
+    // Don't unlock content automatically - only on Enter key
+  };
+
+  const handleEmailKeyPress = async (e) => {
+    if (e.key === 'Enter') {
+      const email = e.target.value;
+      if (!email || !validateEmail(email)) {
+        showNotification('Please enter a valid email address.', 'error');
+        return;
+      }
+      
+      setIsEmailSending(true);
+      
+      try {
+        const currentUseCase = procurementUsecases[usecaseIndex];
+        const emailResult = await sendUseCaseEmail(email, currentUseCase);
+        
+        if (emailResult.success) {
+          // Email sent successfully - unlock content
+          setHasValidEmail(true);
+          localStorage.setItem('enable_user_email', email);
+          localStorage.setItem('enable_content_unlocked', 'true');
+          showNotification('Email sent successfully! Content unlocked.', 'success');
+          
+          // Show unlocked notification temporarily
+          setShowUnlockedNotification(true);
+          setTimeout(() => {
+            setShowUnlockedNotification(false);
+          }, 3000); // Hide after 3 seconds
+        } else {
+          // Email failed - show error and don't unlock
+          showNotification('Failed to send email. Please check your email address and try again.', 'error');
+        }
+      } catch (error) {
+        console.error('Email sending failed:', error);
+        showNotification('Failed to send email. Please check your email address and try again.', 'error');
+      } finally {
+        setIsEmailSending(false);
+      }
+    }
+  };
+
+  const handleShare = async () => {
+    if (!shareEmail || !validateEmail(shareEmail)) {
+      showNotification('Please enter a valid email address.', 'error');
       return;
     }
-    alert('Use case sent to ' + shareEmail + '!');
-    setShareEmail('');
-    // Here you would add actual email sending logic
+    
+    setIsEmailSending(true);
+    
+    try {
+      const currentUseCase = procurementUsecases[usecaseIndex];
+      const emailResult = await sendUseCaseEmail(shareEmail, currentUseCase);
+      
+      if (emailResult.success) {
+        // Email sent successfully - unlock content
+        setHasValidEmail(true);
+        localStorage.setItem('enable_user_email', shareEmail);
+        localStorage.setItem('enable_content_unlocked', 'true');
+        showNotification('Email sent successfully! Content unlocked.', 'success');
+        
+        // Show unlocked notification temporarily
+        setShowUnlockedNotification(true);
+        setTimeout(() => {
+          setShowUnlockedNotification(false);
+        }, 3000); // Hide after 3 seconds
+        
+        setShareEmail('');
+      } else {
+        // Email failed - show error and don't unlock
+        showNotification('Failed to send email. Please check your email address and try again.', 'error');
+      }
+    } catch (error) {
+      console.error('Email sending failed:', error);
+      showNotification('Failed to send email. Please check your email address and try again.', 'error');
+    } finally {
+      setIsEmailSending(false);
+    }
   };
 
 
   const handleTopicSelect = (topic) => {
-    setShowPopup(true);
-    setPopupIndex(0);
-    setChat([...chat, { sender: 'user', content: topic }]);
+    setCurrentPage('usecases');
+    setUsecaseIndex(0);
+    // Don't add topic to chat to avoid duplicate display
     // Add haptic feedback for mobile devices
     if (navigator.vibrate) {
       navigator.vibrate(50);
     }
   };
 
-  const handleClosePopup = () => {
-    setShowPopup(false);
+  const handleBackToMain = () => {
+    setCurrentPage('main');
   };
 
-  const handlePrevCard = () => {
-    setPopupIndex((prev) => (prev > 0 ? prev - 1 : procurementUsecases.length - 1));
+  const handlePrevUsecase = () => {
+    setUsecaseIndex((prev) => (prev > 0 ? prev - 1 : procurementUsecases.length - 1));
   };
-  const handleNextCard = () => {
-    setPopupIndex((prev) => (prev < procurementUsecases.length - 1 ? prev + 1 : 0));
+
+  const handleNextUsecase = () => {
+    setUsecaseIndex((prev) => (prev < procurementUsecases.length - 1 ? prev + 1 : 0));
   };
 
   return (
     <div className="event-networking-agent-chat" style={{ position: 'relative' }}>
       <div className="chat-header enable-header">
         <div className="header-flex">
-          <img src={process.env.PUBLIC_URL + '/assets/images/enable_logo.png'} alt="Enable Logo" className="header-logo" />
-          <img src={process.env.PUBLIC_URL + '/assets/icons/ai-technology.png'} alt="AI Technology Logo" className="header-ai-logo" />
+          <img 
+            src={process.env.PUBLIC_URL + '/assets/images/enable_logo.png'} 
+            alt="Enable Logo" 
+            className="header-logo"
+            loading="lazy"
+          />
+          <img 
+            src={process.env.PUBLIC_URL + '/assets/icons/ai-technology.png'} 
+            alt="AI Technology Logo" 
+            className="header-ai-logo"
+            loading="lazy"
+          />
         </div>
       </div>
-      <div className="floating-contact-icons">
-        <a href={getLoggedInLinkedin()} target="_blank" rel="noopener noreferrer" title="LinkedIn">
-          <FaLinkedin />
-        </a>
-        <a href={`mailto:${getLoggedInEmail()}`} title="Email">
-          <FaEnvelope />
-        </a>
-        {/* <a href="https://wa.me/919075425207" target="_blank" rel="noopener noreferrer" title="WhatsApp">
-          <FaWhatsapp />
-        </a> */}
-        <a href="https://enableyou.co" target="_blank" rel="noopener noreferrer" title="Website">
-          <FaGlobe />
-        </a>
+      
+      {/* Unified Footer - Consistent across all devices */}
+      <div className="unified-footer">
+        <div className="unified-contact-icons">
+          <a 
+            href={getLoggedInLinkedin()} 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            title="LinkedIn"
+            aria-label="Visit our LinkedIn profile"
+          >
+            <FaLinkedin />
+          </a>
+          <a 
+            href={`mailto:${getLoggedInEmail()}`} 
+            title="Email"
+            aria-label="Send us an email"
+          >
+            <FaEnvelope />
+          </a>
+          <a 
+            href="https://enableyou.co" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            title="Website"
+            aria-label="Visit our website"
+          >
+            <FaGlobe />
+          </a>
+        </div>
       </div>
       <div className="chat-body">
-        {chat.map((msg, idx) => (
-          msg.sender === 'agent' ? (
-            <div key={idx} className="chat-row agent">
-              <div className="agent-message-with-avatar">
-                <img
-                  src={process.env.PUBLIC_URL + '/assets/images/Gemini_Generated_Image_p5j4wqp5j4wqp5j4.png'}
-                  alt="Rhishi Agent Avatar"
-                  className="agent-avatar"
-                />
-                <div className="agent-message-content">
-                  {msg.content}
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div key={idx} className="chat-row user">{msg.content}</div>
-          )
-        ))}
-      </div>
-      {showPopup && (
-        <div className="agent-popup-overlay">
-          <div className="agent-popup-card">
-            <button className="agent-popup-close" onClick={handleClosePopup} title="Close">&times;</button>
-            <div className="agent-popup-content">
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', position: 'relative' }}>
-                <button className="agent-popup-arrow-btn left" onClick={handlePrevCard} title="Previous" aria-label="Previous"><FaChevronLeft /></button>
-                <div className="agent-popup-usecase-card">
-                  <div className="usecase-card-content">
-                    <h3 className="usecase-title">{procurementUsecases[popupIndex].outcome}</h3>
-                    <div className="usecase-row usecase-row-highlight">
-                      <span className="usecase-label usecase-label-main">Use Case:</span>
-                      <span className="usecase-value usecase-value-main">{procurementUsecases[popupIndex].title}</span>
-                    </div>
-                    <div className="usecase-row">
-                      <span className="usecase-label">Problem:</span>
-                      <span className="usecase-value">{procurementUsecases[popupIndex].problem}</span>
-                    </div>
-                    <div className="usecase-row">
-                      <span className="usecase-label">Solution:</span>
-                      <span className="usecase-value">{procurementUsecases[popupIndex].solution}</span>
-                    </div>
-                    <div className="usecase-keywords">
-                      {procurementUsecases[popupIndex].persona.map((p, i) => (
-                        <span className="usecase-keyword" key={i}>{p}</span>
-                      ))}
-                      {procurementUsecases[popupIndex].category.map((c, i) => (
-                        <span className="usecase-keyword" key={i}>{c}</span>
-                      ))}
-                    </div>
-                    <div className="usecase-statistic">{procurementUsecases[popupIndex].statistic}</div>
+        {currentPage === 'main' ? (
+          // Main page content
+          chat.map((msg, idx) => (
+            msg.sender === 'agent' ? (
+              <div key={idx} className="chat-row agent">
+                <div className="agent-message-with-avatar">
+                  <img
+                    src={process.env.PUBLIC_URL + '/assets/images/Gemini_Generated_Image_p5j4wqp5j4wqp5j4.png'}
+                    alt="Enable AI Agent Avatar"
+                    className="agent-avatar"
+                    loading="lazy"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                  <div className="agent-message-content">
+                    {msg.content}
                   </div>
                 </div>
-                <div className="usecase-share-block">
-                  <input
-                    type="email"
-                    className="usecase-share-email"
-                    placeholder="Email Use Cases"
-                    value={shareEmail}
-                    onChange={e => setShareEmail(e.target.value)}
-                  />
-                  <button className="usecase-share-btn" onClick={handleShare} title="Share use case">
-                    <FaEnvelope />
-                  </button>
-                  
-                </div>
-                <button className="agent-popup-arrow-btn right" onClick={handleNextCard} title="Next" aria-label="Next"><FaChevronRight /></button>
               </div>
-              {/* {shareStatus && (
-                    <div className="usecase-share-status">{shareStatus}</div>
-              )} */}
+            ) : (
+              <div key={idx} className="chat-row user">{msg.content}</div>
+            )
+          ))
+        ) : (
+          // Use cases page content
+          <div 
+            className="usecases-page"
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
+          >
+            {/* Back button */}
+            <div className="page-header">
+              <button 
+                className="back-button" 
+                onClick={handleBackToMain}
+                title="Back to main"
+                aria-label="Back to main page"
+              >
+                ← Back
+              </button>
+              <h2 className="page-title">High-RoI AI Use Cases</h2>
             </div>
+
+            {/* Carousel indicators */}
+            <div className="carousel-indicators">
+              {procurementUsecases.map((_, index) => (
+                <div
+                  key={index}
+                  className={`carousel-indicator ${index === usecaseIndex ? 'active' : ''}`}
+                  onClick={() => setUsecaseIndex(index)}
+                  title={`Go to use case ${index + 1}`}
+                />
+              ))}
+            </div>
+
+            {/* Use case content */}
+            <div className="usecase-content">
+              <h3 className="usecase-title">{procurementUsecases[usecaseIndex].outcome}</h3>
+              <div className="usecase-row usecase-row-highlight">
+                <span className="usecase-label usecase-label-main">Use Case:</span>
+                <span className="usecase-value usecase-value-main">{procurementUsecases[usecaseIndex].title}</span>
+              </div>
+              
+              {/* Blurred content that requires email */}
+              <div className={`usecase-detailed-content ${!hasValidEmail ? 'blurred' : ''}`}>
+                <div className="usecase-row">
+                  <span className="usecase-label">Problem:</span>
+                  <span className="usecase-value">{procurementUsecases[usecaseIndex].problem}</span>
+                </div>
+                <div className="usecase-row">
+                  <span className="usecase-label">Solution:</span>
+                  <span className="usecase-value">{procurementUsecases[usecaseIndex].solution}</span>
+                </div>
+                <div className="usecase-keywords">
+                  {procurementUsecases[usecaseIndex].persona.map((p, i) => (
+                    <span className="usecase-keyword" key={i}>{p}</span>
+                  ))}
+                  {procurementUsecases[usecaseIndex].category.map((c, i) => (
+                    <span className="usecase-keyword" key={i}>{c}</span>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Email requirement overlay */}
+              {!hasValidEmail && (
+                <div className="email-requirement-overlay">
+                  <div className="email-requirement-content">
+                    <h4>Enter your email to unlock detailed insights</h4>
+                    <p>Get access to the complete problem analysis, solution details, and key personas for this use case.</p>
+                    <p className="enter-hint">Press Enter or click "Unlock Content" to proceed</p>
+                    <div className="email-input-section">
+                           <input
+                             type="email"
+                             className="overlay-email-input"
+                             placeholder="Enter your email address"
+                             value={shareEmail}
+                             onChange={handleEmailChange}
+                             onKeyPress={handleEmailKeyPress}
+                             disabled={isEmailSending}
+                           />
+                           <button 
+                             className="overlay-email-btn" 
+                             onClick={handleShare}
+                             disabled={!validateEmail(shareEmail) || isEmailSending}
+                           >
+                             {isEmailSending ? 'Sending...' : 'Unlock Content'}
+                           </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+                     {/* Content unlocked indicator for returning users */}
+                     {hasValidEmail && showUnlockedNotification && (
+                       <div className="content-unlocked-indicator">
+                         <div className="unlocked-content">
+                           <span className="unlock-icon">🔓</span>
+                           <span className="unlock-text">Content unlocked for {localStorage.getItem('enable_user_email')}</span>
+                         </div>
+                       </div>
+                     )}
+            </div>
+
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
