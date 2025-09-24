@@ -83,7 +83,7 @@ check_node_version
 echo ""
 echo "🧹 Cleaning up existing processes..."
 kill_port_processes 5000 "backend"
-kill_port_processes 3000 "frontend"
+kill_port_processes 3001 "frontend"
 
 # Get the script directory
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
@@ -134,11 +134,11 @@ npm run build >/dev/null 2>&1
 
 # Start frontend using screen (if available) or nohup
 if command_exists screen; then
-    screen -dmS frontend npm start
+    screen -dmS frontend PORT=3001 npm start
     echo "✅ Frontend started in screen session 'frontend'"
     FRONTEND_PID="screen session"
 else
-    nohup npm start > ../frontend.log 2>&1 &
+    nohup PORT=3001 npm start > ../frontend.log 2>&1 &
     FRONTEND_PID=$!
     echo "✅ Frontend started (PID: $FRONTEND_PID)"
 fi
@@ -149,7 +149,7 @@ sleep 2
 echo ""
 echo "🎉 Application started successfully!"
 echo ""
-echo "📱 Frontend: http://localhost:3000"
+echo "📱 Frontend: http://localhost:3001"
 echo "🔗 Backend API: http://localhost:5000"
 echo "📊 Health Check: http://localhost:5000/api/health"
 echo ""

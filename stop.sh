@@ -70,7 +70,7 @@ fi
 
 # Kill processes on required ports
 kill_port_processes 5000 "backend"
-kill_port_processes 3000 "frontend"
+kill_port_processes 3001 "frontend"
 
 echo ""
 echo "✅ Application stopped successfully!"
