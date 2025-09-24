@@ -3,7 +3,7 @@ import procurementUsecases from '../data/procurement.json';
 import procurementAiUsecases from '../data/procurement_ai_usecases.json';
 import { FaLinkedin, FaEnvelope, FaGlobe } from 'react-icons/fa';
 import { useNotification } from './Notification';
-import { sendUseCaseEmail, sendFallbackEmail } from '../services/emailService';
+import { sendUseCaseEmail } from '../services/emailService';
 import '../styles/EventNetworkingAgent.css';
 import '../styles/Notification.css';
 
