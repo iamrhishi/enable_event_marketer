@@ -46,45 +46,7 @@ check_node_version() {
     fi
 }
 
-# Function to check and setup ngrok
-setup_ngrok() {
-    if ! command_exists ngrok; then
-        echo "⚠️  Ngrok not found. Installing ngrok..."
-        if [[ "$OSTYPE" == "darwin"* ]]; then
-            if command_exists brew; then
-                brew install ngrok/ngrok/ngrok
-            else
-                echo "❌ Homebrew not found. Please install ngrok manually from https://ngrok.com/download"
-                echo "Or install Homebrew first: /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
-                return 1
-            fi
-        else
-            echo "❌ Please install ngrok manually from https://ngrok.com/download"
-            return 1
-        fi
-    fi
-    
-    echo "✅ Ngrok found: $(ngrok version | head -1)"
-    
-    # Check if ngrok is authenticated
-    if ! ngrok config check >/dev/null 2>&1; then
-        echo "⚠️  Ngrok needs authentication. Auto-authenticating..."
-        echo "🔐 WARNING: Auth token is hardcoded in script for convenience"
-        echo "   For production, use: ngrok config add-authtoken YOUR_TOKEN"
-        
-        # Auto-authenticate with provided token
-        ngrok config add-authtoken 2zEMWXEIwnM9Ie7OaZygbL83r7V_4Pce2MqBEUG7RahaFT8CR
-        
-        if ngrok config check >/dev/null 2>&1; then
-            echo "✅ Ngrok authenticated successfully"
-        else
-            echo "❌ Failed to authenticate ngrok"
-            return 1
-        fi
-    fi
-    
-    return 0
-}
+# (Removed) ngrok setup — no longer used
 
 # Function to kill processes on specific ports
 kill_port_processes() {
@@ -141,23 +103,9 @@ echo "📋 Checking dependencies..."
 check_python_version
 check_node_version
 
-# Ask user if they want to use ngrok
-echo ""
-echo "🌐 Do you want to expose the frontend via ngrok? (y/n)"
-read -r use_ngrok
-
-if [[ $use_ngrok =~ ^[Yy]$ ]]; then
-    if setup_ngrok; then
-        USE_NGROK=true
-        echo "✅ Ngrok will be started after frontend is ready"
-    else
-        echo "⚠️  Continuing without ngrok..."
-        USE_NGROK=false
-    fi
-else
-    USE_NGROK=false
-    echo "✅ Running locally only"
-fi
+# Always run locally (ngrok removed)
+USE_NGROK=false
+echo "✅ Running locally only"
 
 # Kill existing processes on required ports
 echo ""
@@ -274,52 +222,9 @@ fi
 
 echo "✅ Frontend is running (PID: $FRONTEND_PID)"
 
-# Start ngrok if requested
-if [ "$USE_NGROK" = true ]; then
-    echo ""
-    echo "🌐 Starting ngrok tunnel..."
-    sleep 3  # Wait for frontend to fully load
-    
-    nohup ngrok http 3000 > ../ngrok.log 2>&1 &
-    NGROK_PID=$!
-    
-    # Wait for ngrok to start
-    sleep 5
-    
-    # Try to get ngrok URL with multiple attempts
-    echo "🔗 Getting ngrok URL..."
-    NGROK_URL=""
-    
-    for i in {1..10}; do
-        sleep 2
-        NGROK_URL=$(curl -s http://localhost:4040/api/tunnels 2>/dev/null | python3 -c "
-import sys, json
-try:
-    data = json.load(sys.stdin)
-    for tunnel in data.get('tunnels', []):
-        if tunnel.get('proto') == 'https':
-            print(tunnel.get('public_url', ''))
-            break
-except:
-    pass
-" 2>/dev/null)
-        
-        if [ -n "$NGROK_URL" ]; then
-            break
-        fi
-        echo "⏳ Attempt $i/10: Waiting for ngrok URL..."
-    done
-    
-    if [ -z "$NGROK_URL" ]; then
-        echo "⚠️  Could not automatically get ngrok URL. Check ngrok dashboard at http://localhost:4040"
-        NGROK_URL="http://localhost:4040"
-    else
-        echo "✅ Ngrok tunnel created: $NGROK_URL"
-    fi
-else
-    NGROK_PID=""
-    NGROK_URL=""
-fi
+# (Removed) ngrok start — no longer used
+NGROK_PID=""
+NGROK_URL=""
 
 # Function to cleanup on exit
 cleanup() {
@@ -330,10 +235,7 @@ cleanup() {
     echo "Stopping frontend (PID: $FRONTEND_PID)..."
     kill $FRONTEND_PID 2>/dev/null
     
-    if [ ! -z "$NGROK_PID" ]; then
-        echo "Stopping ngrok (PID: $NGROK_PID)..."
-        kill $NGROK_PID 2>/dev/null
-    fi
+    # ngrok removed
     
     # Wait for processes to terminate gracefully
     sleep 2
@@ -341,9 +243,7 @@ cleanup() {
     # Force kill if still running
     kill -9 $BACKEND_PID 2>/dev/null
     kill -9 $FRONTEND_PID 2>/dev/null
-    if [ ! -z "$NGROK_PID" ]; then
-        kill -9 $NGROK_PID 2>/dev/null
-    fi
+    # ngrok removed
     
     echo "✅ Application stopped successfully"
     exit
@@ -360,30 +260,19 @@ echo "🔗 Backend API: http://localhost:5000"
 echo "📊 Health Check: http://localhost:5000/api/health"
 echo ""
 
-if [ -n "$NGROK_URL" ] && [ "$NGROK_URL" != "http://localhost:4040" ]; then
-    echo "🌐 PUBLIC URL (Share this): $NGROK_URL"
-    echo ""
-fi
-
-if [ -n "$NGROK_PID" ]; then
-    echo "📊 Ngrok Dashboard: http://localhost:4040"
-fi
+# ngrok removed
 
 echo ""
 echo "📋 Process IDs:"
 echo "   Backend PID: $BACKEND_PID"
 echo "   Frontend PID: $FRONTEND_PID"
-if [ -n "$NGROK_PID" ]; then
-    echo "   Ngrok PID: $NGROK_PID"
-fi
+  # ngrok removed
 
 echo ""
 echo "📝 Log files:"
 echo "   Backend: backend.log"
 echo "   Frontend: frontend.log"
-if [ -n "$NGROK_PID" ]; then
-    echo "   Ngrok: ngrok.log"
-fi
+  # ngrok removed
 
 echo ""
 echo "Press Ctrl+C to stop all servers"

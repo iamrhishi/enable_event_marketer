@@ -46,8 +46,8 @@ npm start
 
 ## 📋 Prerequisites
 
-- **Python 3.7+** - For the Flask backend
-- **Node.js 14+** - For the React frontend
+- **Python 3.11+** - For the Flask backend
+- **Node.js 16+** - For the React frontend
 - **npm** - Node package manager
 
 ## 🔧 Installation
@@ -117,7 +117,7 @@ curl http://localhost:5000/api/events
 ### Backend
 - **Flask** - Web framework
 - **Flask-CORS** - Cross-origin resource sharing
-- **Python 3** - Programming language
+- **Python 3.11+** - Programming language
 
 ## 🔄 Development
 

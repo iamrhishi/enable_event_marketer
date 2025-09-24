@@ -1,0 +1,109 @@
+{
+  "Data Discovery Agent": [
+    {
+      "title": "Unified Procurement Knowledge Graph",
+      "outcome": "All procurement data mapped into a connected knowledge graph for quick insights.",
+      "problem": "Critical supplier, spend, and contract data is scattered across multiple ERP, spreadsheets, and legacy tools.",
+      "solution": "AI agents extract, clean, and structure procurement data into a dynamic knowledge graph, enabling semantic search and relationship discovery.",
+      "persona": ["CPO", "Data Analyst", "Procurement Ops Manager"],
+      "category": ["Knowledge Graph", "Data Integration", "Procurement Intelligence"],
+      "statistic": "47% of business leaders say integration complexity is a key barrier to ROI from new procurement tech. (Suplari, 2025)"
+    },
+    {
+      "title": "RAG-based Procurement Search Agent",
+      "outcome": "Procurement teams query complex data in natural language and receive contextual answers.",
+      "problem": "Employees spend hours digging through PDFs, emails, and ERP records to answer simple questions.",
+      "solution": "Retrieval-Augmented Generation (RAG) pipelines connect unstructured and structured procurement data, enabling natural language querying and retrieval.",
+      "persona": ["Category Manager", "Buyer", "Market Intelligence Analyst"],
+      "category": ["RAG", "Information Retrieval", "Knowledge Automation"],
+      "statistic": "Employees spend 19% of their time searching for and gathering information. (McKinsey, 2022)"
+    },
+    {
+      "title": "Automated Data Quality Agent",
+      "outcome": "Cleaner, standardized procurement and supplier datasets.",
+      "problem": "Data inconsistencies in supplier names, contracts, and SKUs cause reporting errors.",
+      "solution": "AI agents detect duplicates, normalize attributes, and enrich missing values to ensure data readiness for analytics and decision-making.",
+      "persona": ["Data Engineer", "Procurement Analyst", "CPO"],
+      "category": ["Data Quality", "Master Data Management"],
+      "statistic": "Only 27% of organizations rate their procurement data as ‘very high quality’. (Spend Matters, 2023)"
+    }
+  ],
+
+  "Agentic Business Modules": [
+    {
+      "title": "Supplier Tracking Agent",
+      "outcome": "Continuous monitoring of supplier performance and risk.",
+      "problem": "Suppliers’ delays, bankruptcies, or compliance failures often go unnoticed until too late.",
+      "solution": "AI agent integrates supplier data, delivery records, and news alerts to proactively flag risk and suggest alternatives.",
+      "persona": ["Supplier Manager", "CPO", "Risk Officer"],
+      "category": ["Supplier Risk", "Monitoring", "ESG"],
+      "statistic": "77% of firms reported at least one supply chain disruption in the past year. (BCI Supply Chain Resilience Report, 2023)"
+    },
+    {
+      "title": "Invoice Management Agent",
+      "outcome": "Automated invoice processing and anomaly detection.",
+      "problem": "Manual invoice reviews are error-prone, slow, and costly.",
+      "solution": "AI reads invoices, matches them against POs and contracts, flags errors, and automates approvals.",
+      "persona": ["Finance Controller", "Accounts Payable Clerk", "Procurement Ops Manager"],
+      "category": ["Invoice Automation", "Accounts Payable"],
+      "statistic": "Automated invoice processing reduces processing costs by up to 80%. (Ardent Partners, 2023)"
+    },
+    {
+      "title": "Spend Analytics Agent",
+      "outcome": "Clear visibility into spend across categories, suppliers, and regions.",
+      "problem": "Spend data is siloed, making it hard to identify savings opportunities.",
+      "solution": "AI agent consolidates spend data from ERP and procurement systems, visualizes patterns, and recommends cost-saving measures.",
+      "persona": ["CPO", "Procurement Analyst", "CFO"],
+      "category": ["Spend Analytics", "Visibility", "Savings"],
+      "statistic": "48% of procurement leaders cite poor spend visibility as a top challenge. (Deloitte CPO Survey, 2023)"
+    },
+    {
+      "title": "Contract Reading Agent",
+      "outcome": "Automated contract risk extraction and clause benchmarking.",
+      "problem": "Contracts are long and inconsistently reviewed, leading to hidden risks.",
+      "solution": "AI reads contracts, flags deviations from standards, and benchmarks against best practices.",
+      "persona": ["Legal Counsel", "Procurement Manager", "Compliance Officer"],
+      "category": ["Contract Management", "Legal Tech", "Compliance"],
+      "statistic": "65% of organizations experience delays due to contract review bottlenecks. (World Commerce & Contracting, 2023)"
+    },
+    {
+      "title": "Market Research Agent",
+      "outcome": "On-demand market insights and competitive intelligence.",
+      "problem": "Procurement teams lack timely, structured information about suppliers, pricing trends, and risks.",
+      "solution": "AI agents scrape, summarize, and synthesize market data into actionable procurement insights.",
+      "persona": ["Market Analyst", "Category Manager", "CPO"],
+      "category": ["Market Intelligence", "Competitive Benchmarking"],
+      "statistic": "62% of procurement leaders say lack of real-time market intelligence limits their effectiveness. (ProcureTech, 2023)"
+    }
+  ],
+
+  "Faster ROI Strategy": [
+    {
+      "title": "AI Middleware Integration",
+      "outcome": "Seamless AI adoption without replacing existing procurement systems.",
+      "problem": "Integration complexity with legacy ERP and procurement tools slows down AI projects.",
+      "solution": "AI acts as a middleware layer that plugs into ERP, P2P, and spreadsheets to enable new insights and workflows without rip-and-replace.",
+      "persona": ["CPO", "IT Integration Lead", "CFO"],
+      "category": ["Integration", "AI Middleware"],
+      "statistic": "47% of business leaders say integration complexity is a key barrier to ROI from new procurement tech. (Suplari, 2025)"
+    },
+    {
+      "title": "Visualization & Alerting Dashboards",
+      "outcome": "Clear, actionable procurement insights with real-time alerts.",
+      "problem": "Decision-makers lack visibility into risks and opportunities across procurement spend and supplier base.",
+      "solution": "AI-driven dashboards unify data, visualize spend trends, and trigger alerts on anomalies or risks.",
+      "persona": ["CPO", "Procurement Analyst", "Supply Chain Manager"],
+      "category": ["Dashboards", "Alerts", "Spend Visibility"],
+      "statistic": "48% of procurement executives want better visibility into spend analytics. (Deloitte CPO Survey, 2023)"
+    },
+    {
+      "title": "Process Automation for Procurement",
+      "outcome": "Faster cycle times and reduced manual workload.",
+      "problem": "Procurement teams spend significant time on repetitive tasks like RFQ comparisons, invoice validation, and supplier checks.",
+      "solution": "AI automates low-value tasks, freeing procurement professionals for strategic decision-making.",
+      "persona": ["Buyer", "Procurement Ops Manager", "Category Manager"],
+      "category": ["Process Automation", "Efficiency", "Productivity"],
+      "statistic": "Companies that better manage tail spend see 5-10% savings on that portion of spend. (Ivalua / Deloitte, 2023)"
+    }
+  ]
+}

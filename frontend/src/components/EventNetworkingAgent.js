@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import procurementUsecases from '../data/procurement.json';
+import procurementAiUsecases from '../data/procurement_ai_usecases.json';
 import { FaLinkedin, FaEnvelope, FaGlobe } from 'react-icons/fa';
 import { useNotification } from './Notification';
 import { sendUseCaseEmail, sendFallbackEmail } from '../services/emailService';
@@ -12,7 +13,7 @@ function getLoggedInUsername() {
   return localStorage.getItem('firstName') || 'Enable User';
 }
 function getLoggedInLinkedin() {
-  return localStorage.getItem('linkedin') || 'https://www.linkedin.com/company/enableai/';
+  return localStorage.getItem('linkedin') || 'http://linkedin.com/in/rhishikesh-thakur';
 }
 function getLoggedInEmail() {
   return localStorage.getItem('email') || 'hello@enableai.com';
@@ -25,11 +26,10 @@ const defaultIntro = (
 );
 
 const topics = [
-  'High-RoI AI Use Cases '
-  // 'AI Lego Pieces',
-  // 'AI-First Business Modules',
-  // 'AI Security & Compliance', 
-  // 'AI Testing'
+  'High-RoI AI Use Cases',
+  'Data Discovery Agent',
+  'Agentic Business Modules',
+  'Faster ROI Strategy'
 ];
 
 function EventNetworkingAgent() {
@@ -75,9 +75,26 @@ function EventNetworkingAgent() {
   const [showUnlockedNotification, setShowUnlockedNotification] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
+  const [selectedTopic, setSelectedTopic] = useState('High-RoI AI Use Cases');
 
   // Minimum distance for swipe detection - more sensitive
   const minSwipeDistance = 30;
+
+  // Function to get use cases data based on selected topic
+  const getUsecasesData = () => {
+    switch (selectedTopic) {
+      case 'High-RoI AI Use Cases':
+        return procurementUsecases;
+      case 'Data Discovery Agent':
+        return procurementAiUsecases['Data Discovery Agent'] || [];
+      case 'Agentic Business Modules':
+        return procurementAiUsecases['Agentic Business Modules'] || [];
+      case 'Faster ROI Strategy':
+        return procurementAiUsecases['Faster ROI Strategy'] || [];
+      default:
+        return procurementUsecases;
+    }
+  };
 
   const onTouchStart = (e) => {
     setTouchEnd(null);
@@ -125,7 +142,7 @@ function EventNetworkingAgent() {
       setIsEmailSending(true);
       
       try {
-        const currentUseCase = procurementUsecases[usecaseIndex];
+        const currentUseCase = getUsecasesData()[usecaseIndex];
         const emailResult = await sendUseCaseEmail(email, currentUseCase);
         
         if (emailResult.success) {
@@ -194,7 +211,8 @@ function EventNetworkingAgent() {
 
   const handleTopicSelect = (topic) => {
     setCurrentPage('usecases');
-    setUsecaseIndex(0);
+    setSelectedTopic(topic);
+    setUsecaseIndex(0); // Reset to first use case when switching topics
     // Don't add topic to chat to avoid duplicate display
     // Add haptic feedback for mobile devices
     if (navigator.vibrate) {
@@ -207,11 +225,11 @@ function EventNetworkingAgent() {
   };
 
   const handlePrevUsecase = () => {
-    setUsecaseIndex((prev) => (prev > 0 ? prev - 1 : procurementUsecases.length - 1));
+    setUsecaseIndex((prev) => (prev > 0 ? prev - 1 : getUsecasesData().length - 1));
   };
 
   const handleNextUsecase = () => {
-    setUsecaseIndex((prev) => (prev < procurementUsecases.length - 1 ? prev + 1 : 0));
+    setUsecaseIndex((prev) => (prev < getUsecasesData().length - 1 ? prev + 1 : 0));
   };
 
   return (
@@ -306,12 +324,12 @@ function EventNetworkingAgent() {
               >
                 ← Back
               </button>
-              <h2 className="page-title">High-RoI AI Use Cases</h2>
+              <h2 className="page-title">{selectedTopic}</h2>
             </div>
 
             {/* Carousel indicators */}
             <div className="carousel-indicators">
-              {procurementUsecases.map((_, index) => (
+              {getUsecasesData().map((_, index) => (
                 <div
                   key={index}
                   className={`carousel-indicator ${index === usecaseIndex ? 'active' : ''}`}
@@ -323,27 +341,27 @@ function EventNetworkingAgent() {
 
             {/* Use case content */}
             <div className="usecase-content">
-              <h3 className="usecase-title">{procurementUsecases[usecaseIndex].outcome}</h3>
+              <h3 className="usecase-title">{getUsecasesData()[usecaseIndex].outcome}</h3>
               <div className="usecase-row usecase-row-highlight">
                 <span className="usecase-label usecase-label-main">Use Case:</span>
-                <span className="usecase-value usecase-value-main">{procurementUsecases[usecaseIndex].title}</span>
+                <span className="usecase-value usecase-value-main">{getUsecasesData()[usecaseIndex].title}</span>
               </div>
               
               {/* Blurred content that requires email */}
               <div className={`usecase-detailed-content ${!hasValidEmail ? 'blurred' : ''}`}>
                 <div className="usecase-row">
                   <span className="usecase-label">Problem:</span>
-                  <span className="usecase-value">{procurementUsecases[usecaseIndex].problem}</span>
+                  <span className="usecase-value">{getUsecasesData()[usecaseIndex].problem}</span>
                 </div>
                 <div className="usecase-row">
                   <span className="usecase-label">Solution:</span>
-                  <span className="usecase-value">{procurementUsecases[usecaseIndex].solution}</span>
+                  <span className="usecase-value">{getUsecasesData()[usecaseIndex].solution}</span>
                 </div>
                 <div className="usecase-keywords">
-                  {procurementUsecases[usecaseIndex].persona.map((p, i) => (
+                  {getUsecasesData()[usecaseIndex].persona.map((p, i) => (
                     <span className="usecase-keyword" key={i}>{p}</span>
                   ))}
-                  {procurementUsecases[usecaseIndex].category.map((c, i) => (
+                  {getUsecasesData()[usecaseIndex].category.map((c, i) => (
                     <span className="usecase-keyword" key={i}>{c}</span>
                   ))}
                 </div>
