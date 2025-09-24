@@ -134,11 +134,11 @@ npm run build >/dev/null 2>&1
 
 # Start frontend using screen (if available) or nohup
 if command_exists screen; then
-    screen -dmS frontend PORT=3001 npm start
+    screen -dmS frontend bash -c "export PORT=3001 && npm start"
     echo "✅ Frontend started in screen session 'frontend'"
     FRONTEND_PID="screen session"
 else
-    nohup PORT=3001 npm start > ../frontend.log 2>&1 &
+    nohup bash -c "export PORT=3001 && npm start" > ../frontend.log 2>&1 &
     FRONTEND_PID=$!
     echo "✅ Frontend started (PID: $FRONTEND_PID)"
 fi
